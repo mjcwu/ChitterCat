@@ -4,6 +4,7 @@ const socketIO = require('socket.io');
 // http is build in library
 const http = require('http');
 
+const {generateMessage} = require('./utils/message')
 const app = express();
 const port = process.env.PORT || 3000;
 const publicPath = path.join(__dirname, '../public');
@@ -27,27 +28,15 @@ io.on('connection', (socket)=>{
   //   text: 'you should retire',
   //   createAt: 123
   // });
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat room',
-    createAt: new Date().getTime()
-  })
+  socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app'));
 
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'New user joined',
-    createAt: new Date().getTime()
-  })
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
   
   socket.on('createMessage', (newMessage)=>{
     console.log('createMessage', newMessage);
 
     // to everyone
-    io.emit('newMessage',{
-      from: newMessage.from,
-      text: newMessage.text,
-      createAt: new Date().getTime()
-    })
+    io.emit('newMessage',generateMessage(newMessage.from, newMessage.text));
 
     // broadcast to everyone but the creator
     // socket.broadcast.emit('newMessage', {

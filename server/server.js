@@ -21,14 +21,22 @@ app.use(express.static(publicPath));
 io.on('connection', (socket)=>{
   console.log('New user connected')
 
-  socket.emit('newMessage', {
-    from: 'Brock Obama',
-    text: 'you should retire',
-    createAt: 123
-  });
+  // socket.emit - to single user
+  // socket.emit('newMessage', {
+  //   from: 'Brock Obama',
+  //   text: 'you should retire',
+  //   createAt: 123
+  // });
 
   socket.on('createMessage', (newMessage)=>{
     console.log('createMessage', newMessage);
+
+    // to everyone
+    io.emit('newMessage',{
+      from: newMessage.from,
+      text: newMessage.text,
+      createAt: new Date().getTime()
+    })
   })
 
   socket.on('disconnect', ()=>{

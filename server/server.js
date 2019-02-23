@@ -32,12 +32,14 @@ io.on('connection', (socket)=>{
 
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
   
-  socket.on('createMessage', (newMessage)=>{
+  // callback function is used to acknowledge that the server has received the data from user
+  socket.on('createMessage', (newMessage, callback)=>{
     console.log('createMessage', newMessage);
 
     // to everyone
     io.emit('newMessage',generateMessage(newMessage.from, newMessage.text));
 
+    callback('This is from the server.');
     // broadcast to everyone but the creator
     // socket.broadcast.emit('newMessage', {
     //   from: newMessage.from,

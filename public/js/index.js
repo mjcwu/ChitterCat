@@ -16,12 +16,26 @@ socket.on('disconnect', function(){
 
 socket.on('newMessage', function(message){
   const formattedTime = moment(message.createdAt).format('h:mm a');
+  const template = jQuery('#message-template').html();
+  // in order to provide the value, 
+  // first argument is the template you want to render, 
+  // second argument is to pass an object that allow Mustache to render
+  const html = Mustache.render(template, {
+    text: message.text,
+    from: message.from,
+    createdAt: formattedTime
+  });
 
-  // use jQuery to create an element and we can modify the element and add markup
-  const li = jQuery('<li></li>');
-  li.text(`${message.from} ${formattedTime}: ${message.text}`);
+  jQuery('#messages').append(html);
 
-  jQuery('#messages').append(li);
+  // below is not as scable as the new one
+  if(false){
+    // use jQuery to create an element and we can modify the element and add markup
+    const li = jQuery('<li></li>');
+    li.text(`${message.from} ${formattedTime}: ${message.text}`);
+    
+    jQuery('#messages').append(li);
+  }
 }); 
  
 // to have an acknowldgement, use a call back function as third argument
@@ -34,16 +48,27 @@ socket.on('newMessage', function(message){
 
 socket.on('newLocationMessage', function(message){
   const formattedTime = moment(message.createdAt).format('h:mm a');
-  
-  const li = jQuery('<li></li>');
+  const template = jQuery('#location-message-template').html();
+  const html = Mustache.render(template, {
+    url: message.url,
+    from: message.from,
+    createdAt: formattedTime
+  });
 
-  // "_blank" open url in a new tab
-  const a = jQuery('<a target="_blank">My current location</a>');
+  jQuery('#messages').append(html);
 
-  li.text(`${message.from} ${formattedTime}:`);
-  a.attr('href', message.url);
-  li.append(a);
-  jQuery('#messages').append(li);
+  // below is not as scable as the new one
+  if(false){
+    const li = jQuery('<li></li>');
+    
+    // "_blank" open url in a new tab
+    const a = jQuery('<a target="_blank">My current location</a>');
+    
+    li.text(`${message.from} ${formattedTime}:`);
+    a.attr('href', message.url);
+    li.append(a);
+    jQuery('#messages').append(li);
+  }
 });
 
 jQuery('#message-form').on('submit', function(e){
@@ -59,7 +84,7 @@ jQuery('#message-form').on('submit', function(e){
   })
 }); 
 
-// jQuery can be replaced with $('#send-location')
+// jQuery can be replaced with $
 const locationButton = jQuery('#send-location');
 locationButton.on('click', function(){
   // if the program has access to the location

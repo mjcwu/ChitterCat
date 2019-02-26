@@ -18,13 +18,16 @@ function scrollToBottom () {
 }
 
 socket.on('connect', function(){
-  console.log('Connected to server!');
+  const params = jQuery.deparam(window.location.search);
 
-  // put it inside the connect so it only happens when connected to the server
-  // socket.emit('createMessage', {
-  //   from: 'George Bush',
-  //   text: 'time to retire'
-  // });
+  socket.emit('join', params, function(err){
+    if(err){
+      alert(err);
+      window.location.href='/';
+    } else{
+      console.log('No error');
+    }
+  })
 });
 
 socket.on('disconnect', function(){

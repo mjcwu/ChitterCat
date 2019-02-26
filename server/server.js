@@ -5,6 +5,7 @@ const socketIO = require('socket.io');
 const http = require('http');
 
 const {generateMessage, generateLocationMessage} = require('./utils/message')
+const {isRealString} = require('./utils/validation')
 const app = express();
 const port = process.env.PORT || 3000;
 const publicPath = path.join(__dirname, '../public');
@@ -22,12 +23,24 @@ app.use(express.static(publicPath));
 io.on('connection', (socket)=>{
   console.log('New user connected')
   
-  // socket.emit - to single user
-  socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app'));
+  // --------------- join page ----------------
+  socket.on('join', (params, callback)=>{
+    if(!isRealString(params.name) || !isRealString(params.room)) {
+      callback('Name and room name are required.')
+    }
 
-  // broadcast to everyone but the creator
-  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
-  
+    // join specific room 'the argument'
+    socket.join(params.room);
+
+      // socket.emit - to that joined user
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app'));
+
+    // broadcast to everyone but the just joined uesr
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`));
+    callback();
+  })
+
+  // --------------- create msg ---------------
   // callback function is used to acknowledge that the server has received the data from user
   socket.on('createMessage', (newMessage, callback)=>{
     console.log('createMessage', newMessage);

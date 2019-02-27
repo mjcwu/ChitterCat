@@ -47,6 +47,7 @@ socket.on('updateUserList', function(users){
 
 socket.on('newMessage', function(message){
   const formattedTime = moment(message.createdAt).format('h:mm a');
+  
   const template = jQuery('#message-template').html();
   // in order to provide the value, 
   // first argument is the template you want to render, 
@@ -81,19 +82,6 @@ socket.on('newLocationMessage', function(message){
 
   jQuery('#messages').append(html);
   scrollToBottom();
-
-  // below is not as scable as the new one
-  if(false){
-    const li = jQuery('<li></li>');
-    
-    // "_blank" open url in a new tab
-    const a = jQuery('<a target="_blank">My current location</a>');
-    
-    li.text(`${message.from} ${formattedTime}:`);
-    a.attr('href', message.url);
-    li.append(a);
-    jQuery('#messages').append(li);
-  }
 });
 
 jQuery('#message-form').on('submit', function(e){
@@ -102,7 +90,6 @@ jQuery('#message-form').on('submit', function(e){
   const messageTextbox = jQuery('[name=message]')
 
   socket.emit('createMessage', {
-    from: 'User',
     text: messageTextbox.val()
   }, function(){
     messageTextbox.val('')

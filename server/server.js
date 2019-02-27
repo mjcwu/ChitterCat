@@ -51,16 +51,21 @@ io.on('connection', (socket)=>{
   // --------------- create msg ---------------
   // callback function is used to acknowledge that the server has received the data from user
   socket.on('createMessage', (newMessage, callback)=>{
-    console.log('createMessage', newMessage);
+    const user = users.getUser(socket.id);
 
-    // to everyone
-    io.emit('newMessage',generateMessage(newMessage.from, newMessage.text));
-
+    if(user && isRealString(newMessage.text)){
+      // to everyone
+      io.to(user.room).emit('newMessage',generateMessage(user.name, newMessage.text));
+    }
     callback();
   });
 
   socket.on('createLocationMessage', (coords)=>{
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude))
+    const user = users.getUser(socket.id);
+    
+    if(user){
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude))
+    }
   })
 
   socket.on('disconnect', () => {

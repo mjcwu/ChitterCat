@@ -10,14 +10,16 @@ class Users {
     return user;
   }
   
-  removeUser(id){
-    let removedUser = this.getUser(id)
+  removeUser (id) {
+    var user = this.getUser(id);
 
-    if(removedUser){
-      this.users = this.users.filter((user)=> user.id!== id);
+    if (user) {
+      this.users = this.users.filter((user) => {
+        return user.id !== id
+      });
     }
 
-    return removedUser;
+    return user;
   }
 
   getUser(id){

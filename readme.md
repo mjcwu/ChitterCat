@@ -2,6 +2,9 @@
 
 A social chatting app that let users to choose the chitter room they want to join and chat with other users.
 
+![ChitterCat Front Page](https://i.imgur.com/efwHpFc.jpg)
+![ChitterCat Chat Interface](https://i.imgur.com/vbYmQTc.png)
+
 ## Getting Started
 ExpressJS front-end and back-end
 
